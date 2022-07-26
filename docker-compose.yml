@@ -1,0 +1,56 @@
+version: "3.3"
+
+services:
+  app:
+    #image: library/php:8-fpm-alpine
+    build:
+      context: ./docker/app
+    container_name: app
+    restart: always
+    volumes:
+      - ./docker/app/php-ini/php.ini:/usr/local/etc/php/php.ini
+      - ./:/var/www/
+    working_dir: /var/www
+    networks:
+      - laravel-bridge
+
+  db:
+    image: library/mariadb:latest
+    container_name: db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE_NAME=petrovich
+    networks:
+      - laravel-bridge
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/mariadb/dbdata:/var/lib/mysql
+
+  #phpmyadmin:
+  #  image: library/phpmyadmin:fpm-alpine
+  #  restart: always
+  #  ports:
+  #    - 8080:80
+  #  environment:
+  #    - PMA_ARBITRARY=1
+
+  nginx:
+    image: library/nginx:alpine
+    container_name: nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./:/var/www/
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    working_dir: /var/www
+    networks:
+      - laravel-bridge
+
+networks:
+  laravel-bridge:
+    driver: bridge
+
