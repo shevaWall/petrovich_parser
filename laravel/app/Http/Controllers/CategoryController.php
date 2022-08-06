@@ -7,13 +7,12 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-
     public function addCategory($params)
     {
         $category = Category::create([
             'name' => $params['name'],
             'url' => $params['url'],
-            'parent_id' => $parent_url = (isset($params['parent_id']) ? $params['parent_id'] : ''),
+            'parent_id' => ($params['parent_id'] ?? ""),
             'level' => $params['level'],
         ]);
     }
