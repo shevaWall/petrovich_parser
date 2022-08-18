@@ -17,11 +17,13 @@ class CreateShopItemsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('price');
-            $table->integer('category_id')->nullable();
+            $table->string('price_per');
+            $table->integer('category_id');
             $table->text('preview_description');
             $table->text('description')->nullable();
+            $table->text('details')->nullable();
+            $table->integer('code');
             $table->string('url');
-            $table->string('price_per');
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\IndexController;
 use Illuminate\Support\Facades\Route;
+use App\Service\ParserService;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +19,21 @@ use Illuminate\Support\Facades\Route;
     return view('index');
 });*/
 
-Route::get("/", [IndexController::class, "index"]);
+Route::get("/", [IndexController::class, "index"])
+    ->name('index');
+
+Route::group([
+//    'middleware'=>  '',
+    'prefix'    =>  'parser',
+    'as'        =>  'parser.',
+], function(){
+    Route::get("categoriesAndShopItems", [ParserService::class, "parseCategoryAndShopItems"])
+        ->name('parseCategoriesAndShopItems');
+    Route::get("categories", [ParserService::class, "getCategory"])
+        ->name('parseCategories');
+    Route::get("shopItems", [ParserService::class, "getShopItems"])
+            ->name('parseShopItems');
+    Route::delete('deleteAllCategoriesAndShopItems', [ParserService::class, "deleteAllCategoriesAndShopItems"])
+        ->name('deleteAll');
+
+});

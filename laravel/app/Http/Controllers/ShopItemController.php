@@ -9,19 +9,18 @@ use Illuminate\Support\Facades\DB;
 
 class ShopItemController extends Controller
 {
-    public function addShopItem($params)
+    public function addShopItems($params)
     {
         if (ShopItemController::checkShopItemForAvailabilityInDB($params['name']) === false) {
-            $cat_id = Category::where('name', $params['category_id'])->get();
-
             $shopItem = ShopItem::create([
                 'name' => $params['name'],
                 'price' => preg_replace("/[^,.0-9]/", '', $params['price']),
-                'category_id' => $cat_id[0]['id'],
                 'preview_description' => $params['preview_description'],
-                'description' => $desc = (isset($params['description'])) ? $params['description'] : "",
+                'category_id' => 0,
+                'description' => (isset($params['description'])) ? $params['description'] : "",
                 'url' => $params['url'],
                 'price_per' => $params['price_per'],
+                'code' => $params['code'],
             ]);
         }
     }
@@ -32,12 +31,27 @@ class ShopItemController extends Controller
 
         $shopItem = DB::table('shop_items')
             ->where('name', $shopItemName)
-            ->get();
+            ->first();
 
-        if (count($shopItem) == 0)
+        if (!is_null($shopItem) == 0)
             $availability = false;
 
 
         return $availability;
+    }
+
+    // автоматически запускается после выполнения getShopItems класса app/service/ParserService
+    public function completeShopItemInfo($params)
+    {
+        $shopItem = ShopItem::find($params['shop_item_id']);
+
+        $shopItem->description = $params['description'];
+        $shopItem->details = $params['details'];
+        $shopItem->save();
+    }
+
+    public static function destroyAll()
+    {
+        ShopItem::truncate();
     }
 }
