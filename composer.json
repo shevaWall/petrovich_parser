@@ -1,5 +1,6 @@
 {
     "require": {
-        "barryvdh/laravel-debugbar": "^3.7"
+        "barryvdh/laravel-debugbar": "^3.7",
+      "ext-curl": "*"
     }
 }

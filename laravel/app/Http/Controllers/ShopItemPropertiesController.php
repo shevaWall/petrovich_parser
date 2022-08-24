@@ -3,29 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\ShopItemProperties;
+use App\Models\ShopItemPropertyValue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ShopItemPropertiesController extends Controller
 {
-    public function addPropertyNameIfNotExists($params)
+    public function addPropertyName($properties)
     {
-        foreach ($params['properties'] as $property_name => $property_value) {
-            $shopItemProperty = ShopItemProperties::where('name', $property_name);
+        foreach ($properties as $property) {
+            $exists_prop = ShopItemPropertiesController::getPropertyName($property->title);
 
-            $property['shop_item_id'] = $params['shop_item_id'];
-            $property['value'] = $property_value;
-
-            if ($shopItemProperty->exists()) {
-                $shopItemProperty = $shopItemProperty->get();
-                $property['property_id'] = $shopItemProperty[0]['id'];
-            } else {
-                $shopItemProperty = ShopItemProperties::create([
-                    'name' => $property_name,
+            if (is_null($exists_prop)) {
+                ShopItemProperties::create([
+                    'name' => $property->title,
                 ]);
-                $property['property_id'] = $shopItemProperty['id'];
             }
-
-            ShopItemPropertyValueController::addPropertyToShopItem($property);
         }
+    }
+
+    public static function destroyAll(){
+        ShopItemProperties::truncate();
+    }
+
+    private function getPropertyName($title)
+    {
+        return DB::table('shop_item_properties')
+            ->where('name', $title)
+            ->first();
     }
 }

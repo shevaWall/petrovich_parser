@@ -15,15 +15,15 @@ class CreateShopItemsTable extends Migration
     {
         Schema::create('shop_items', function (Blueprint $table) {
             $table->id();
+            $table->integer('code');
             $table->string('name');
-            $table->string('price');
-            $table->string('price_per');
             $table->integer('category_id');
-            $table->text('preview_description');
+            $table->string('price_gold');
+            $table->string('price_retail');
+            $table->string('price_per');
+            $table->text('preview_description')->nullable();
             $table->text('description')->nullable();
             $table->text('details')->nullable();
-            $table->integer('code');
-            $table->string('url');
             $table->timestamps();
         });
     }

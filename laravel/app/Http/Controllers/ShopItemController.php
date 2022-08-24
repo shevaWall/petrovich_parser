@@ -9,35 +9,40 @@ use Illuminate\Support\Facades\DB;
 
 class ShopItemController extends Controller
 {
-    public function addShopItems($params)
+    public function addShopItems($shopItems)
     {
-        if (ShopItemController::checkShopItemForAvailabilityInDB($params['name']) === false) {
-            $shopItem = ShopItem::create([
-                'name' => $params['name'],
-                'price' => preg_replace("/[^,.0-9]/", '', $params['price']),
-                'preview_description' => $params['preview_description'],
-                'category_id' => 0,
-                'description' => (isset($params['description'])) ? $params['description'] : "",
-                'url' => $params['url'],
-                'price_per' => $params['price_per'],
-                'code' => $params['code'],
+        foreach ($shopItems as $shopItem) {
+            $category = DB::table('categories')
+                ->select('id')
+                ->where('code', $shopItem->section->code)
+                ->first();
+
+            if (is_null($category)) {
+                $breadcrumbs_length = count($shopItem->breadcrumbs);
+                $parent_code = $shopItem->breadcrumbs[$breadcrumbs_length - 2]->code;
+
+                $category = CategoryController::addCategory($shopItem->section, $parent_code);
+            }
+            if (!isset($category->id)) {
+                dd($category);
+            } else {
+                $category_id = $category->id;
+            }
+
+            $new_shopItem = ShopItem::create([
+                'code' => $shopItem->code,
+                'name' => $shopItem->title,
+                'category_id' => $category_id,
+                'price_gold' => $shopItem->price->gold,
+                'price_retail' => $shopItem->price->retail,
+                'price_per' => $shopItem->unit_title,
             ]);
+
+            if (isset($shopItem->properties)) {
+                ShopItemPropertiesController::addPropertyName($shopItem->properties);
+                ShopItemPropertyValueController::addPropertyValue($shopItem->properties, $new_shopItem->id);
+            }
         }
-    }
-
-    private function checkShopItemForAvailabilityInDB($shopItemName): bool
-    {
-        $availability = true;
-
-        $shopItem = DB::table('shop_items')
-            ->where('name', $shopItemName)
-            ->first();
-
-        if (!is_null($shopItem) == 0)
-            $availability = false;
-
-
-        return $availability;
     }
 
     // автоматически запускается после выполнения getShopItems класса app/service/ParserService

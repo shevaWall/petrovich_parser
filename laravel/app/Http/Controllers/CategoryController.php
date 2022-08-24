@@ -8,22 +8,24 @@ use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
-    public function addCategory($params)
+    public function addCategory($section, $parent_code = '')
     {
-        $existCategory = DB::table('categories')
-            ->where('name', $params['name'])
-            ->where('url', $params['url'])
-            ->first();
+        if($parent_code != ''){
+            $parent_id = DB::table('categories')
+                ->select('id')
+                ->where('code', $parent_code)
+                ->first();
+            if(!is_null($parent_id))
+                $parent_id = $parent_id->id;
+        }else{
+            $parent_id = '';
+        }
 
-        if (is_null($existCategory)) {
-            $category = Category::create([
-                'name' => $params['name'],
-                'url' => $params['url'],
-                'parent_id' => ($params['parent_id'] ?? ""),
-                'level' => $params['level'],
-            ]);
-            dump($params);
-        };
+        return Category::create([
+            'name' => $section->title,
+            'parent_id' => $parent_id,
+            'code' => $section->code
+        ]);
     }
 
     public static function destroyAll()

@@ -3,25 +3,19 @@
 namespace App\Service;
 
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ParserInformationController;
 use App\Http\Controllers\ShopItemController;
 use App\Http\Controllers\ShopItemPropertiesController;
+use App\Http\Controllers\ShopItemPropertyValueController;
 use App\Models\Category;
-use App\Models\ShopItem;
-use App\Models\ShopItemProperties;
 use Illuminate\Support\Facades\DB;
-use phpDocumentor\Reflection\Types\Integer;
+use Illuminate\Support\Facades\Storage;
 use phpQuery;
+
 
 class ParserService
 {
-    public $shopItems;
-
-    public function parseCategoryAndShopItems()
-    {
-        $this->getCategory();
-        $this->getShopItems();
-    }
+    private $json_page;
+    private $categories;
 
     public function deleteAllCategoriesAndShopItems()
     {
@@ -31,162 +25,124 @@ class ParserService
 
     public function getCategory()
     {
-//        CategoryController::destroyAll();
-        /*  if (!ParserInformationController::getParserStatus('category') && !ParserInformationController::getParserStatus('shopItems')) {
-              ParserInformationController::setParserStatus('category', 1);*/
-        $html = $this->tryFileGetContents("https://petrovich.ru/catalog/");
-        $dom = phpQuery::newDocument($html);
+        CategoryController::destroyAll();
 
-        foreach ($dom->find(".main__catalog-categoty") as $k => $v) {
-            $pq = pq($v);
-            $params['name'] = $pq->find('.main__catalog-title-block p')->text();
-            $params['url'] = $pq->find('.main__catalog-title-block a')->attr('href');
-            $params['level'] = 1;
+        $api_url = "https://api.petrovich.ru/catalog/v2.3/sections/tree/3?city_code=spb&client_id=pet_site";
+        $ch = $this->runCurl($api_url);
+        $this->getJsonPage($ch);
 
-            CategoryController::addCategory($params);
-        }
+        foreach ($this->json_page->data->sections as $section) {
+            CategoryController::addCategory($section);
 
-        phpQuery::unloadDocuments($dom);
-
-        $this->getSubcategory($level = 1);
-        /**
-         * перезапускаем, чтобы добавить недостающие категории, кт почему-то не парсятся
-         * честно, неделю потратил на поиски этого бага. должно быть ~1262 категории
-         **/
-//        $this->getSubcategory($level = 1);
-
-//            ParserInformationController::setParserStatus('category', 0);
-//        }
-    }
-
-    private function getSubcategory($level)
-    {
-        $category = DB::table('categories')->where('level', $level)->select('url', 'id')->get();
-
-        if (count($category)) {
-            foreach ($category as $category_v) {
-
-                $html = $this->tryFileGetContents("https://petrovich.ru" . $category_v->url);
-                $dom = phpQuery::newDocument($html);
-                $countChildren = count($dom->find(".catalog-subsection")->stack());
-
-                if ($countChildren) {
-                    foreach ($dom->find(".catalog-subsection") as $v) {
-                        $pq = pq($v);
-
-                        $params['name'] = $pq->text();
-                        $params['url'] = $pq->attr('href');
-                        $params['level'] = $level + 1;
-                        $params['parent_id'] = $category_v->id;
-
-                        CategoryController::addCategory($params);
-                    }
-                }
-                phpQuery::unloadDocuments($dom);
+            if (!is_null($section->sections)) {
+                $this->getSubCategory($section->sections, $section->code);
             }
-
-            $this->getSubcategory($level + 1);
         }
     }
 
-    private function tryFileGetContents($url)
+    private function getSubCategory($sections, $parent_category_code = '')
+    {
+        foreach ($sections as $section) {
+            CategoryController::addCategory($section, $parent_category_code);
+            if (!is_null($section->sections)) {
+                $this->getSubCategory($section->sections, $section->code);
+            }
+        }
+    }
+
+    public function runCurl($url)
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_COOKIEFILE, Storage::disk('public')->path('petrovich.ru_cookies.txt'));
 
         $r = curl_exec($ch);
         curl_close($ch);
+
         return $r;
     }
 
     public function getShopItems()
     {
+        \Debugbar::disable();
+
         ShopItemController::destroyAll();
-        $categories = Category::where('level', 2)->get();
-        if (count($categories) == 0) {
-            $this->getCategory();
-            $categories = Category::where('level', 2)->get();
+        ShopItemPropertiesController::destroyAll();
+        ShopItemPropertyValueController::destroyAll();
+
+        $categories1lvl = DB::table('categories')
+            ->select('id')
+            ->where('parent_id', '')
+            ->get();
+
+        $categories2lvl = array();
+        foreach ($categories1lvl as $category1lvl) {
+            $categories2lvl[] = DB::table('categories')
+                ->select('code')
+                ->where('parent_id', $category1lvl->id)
+                ->get();
         }
 
-        foreach ($categories as $category) {
-            $this->grabItem($category['url']);
-        }
-    }
+        foreach ($categories2lvl as $category2lvl) {
+            foreach ($category2lvl as $category) {
+                $api_url = $this->makeUrl($category->code);
+                $ch = $this->runCurl($api_url);
+                $this->getJsonPage($ch);
 
-    private function grabItem($category_url, $page = 0, $dom = "")
-    {
-        ($dom != "") ?? phpQuery::unloadDocuments($dom);
+                if ($this->json_page->state->code != 20001) {
+                    dd($this->json_page);
+                } else {
+                    if (!is_null($this->json_page->data->products) && count($this->json_page->data->products)) {
+                        $page_qty = ceil($this->json_page->data->pagination->products_count / 50);
+                        $this->grabItems();
 
-        $url = ($page == 0)
-            ? "https://petrovich.ru" . $category_url . "?sort=popularity_desc"
-            : "https://petrovich.ru" . $category_url . "?sort=popularity_desc&p=$page";
+                        $offset = 0;
+                        for ($page = 2; $page <= $page_qty; $page++) {
+                            $offset += 50;
+                            $api_url = $this->makeUrl($category->code, $offset);
+                            $ch = $this->runCurl($api_url);
 
-        $html = $this->tryFileGetContents($url);
-
-        $dom = phpQuery::newDocument($html);
-        $count = 0;
-
-        if (count($dom->find(".page-item-list")->stack()) > 0) {
-            foreach ($dom->find(".page-item-list") as $k => $v) {
-                $pq = pq($v);
-
-                $params['name'] = $pq->find('.title')->text();
-                $params['price'] = ($pq->find('.retail-price')->text() != '')
-                    ? $pq->find('.retail-price')->text()
-                    : $pq->find('.gold-price')->text();
-                $params['preview_description'] = $pq->find('.product-card-properties')->text();
-                $params['url'] = $pq->find('.title')->attr('href');
-                $params['price_per'] = ($pq->find('p.unit-tab')->text() != '')
-                    ? $pq->find('p.unit-tab')->text()
-                    : $pq->find('span.active.unit-tab')->text();
-                $params['code'] = $pq->find('.code .pt-c-secondary')->text();
-                ShopItemController::addShopItem($params);
-                $count++;
-            }
-
-            ($count == 0) ? $this->grabItem($category_url, $page, $dom) : $this->pageNavigation($category_url, $dom, $page);
-
-        } else {
-            $this->grabItem($category_url, $page);
-        }
-    }
-
-    private function pageNavigation($category_url, $dom, $page)
-    {
-        if ($dom->find('.pagination-nav .pages-list')->stack() > 0) {
-            foreach ($dom->find('.pagination-nav .pages-list a') as $k => $link) {
-                if ($k > 0) {
-                    $pq = pq($link);
-                    if ($pq->text() >= $page + 2) {
-                        $this->grabItem($category_url, $page + 1, $dom);
+                            $this->getJsonPage($ch);
+                            $this->grabItems();
+                        }
                     }
                 }
             }
-        } else {
-            dump("блок с навигацией не найден");
         }
     }
 
-    public function getFullShopItemInformation($shopItems)
+    private function grabItems()
     {
-        foreach ($shopItems as $shopItem) {
-            $url = "https://petrovich.ru" . $shopItem['url'];
-            $html = $this->tryFileGetContents($url);
-            $dom = phpQuery::newDocument($html);
+        $shopItems = array();
+        $products = $this->json_page->data->products;
 
-            $params['shop_item_id'] = $shopItem['id'];
-            $params['description'] = htmlspecialchars(pq($dom->find('.content'))->html());
-            $params['details'] = htmlspecialchars(pq($dom->find('.product-details'))->html());
-            foreach ($dom->find('.product-properties-list li') as $k => $v) {
-                $pq = pq($v);
-                $params['properties'][$pq->find('.title')->text()] = $pq->find('.value')->text();
-            }
+        foreach ($products as $k => $product) {
+            $shopItems[$k] = $product;
+        }
+        ShopItemController::addShopItems($shopItems);
+        unset($shopItems);
+        unset($this->json_page);
+    }
 
-            phpQuery::unloadDocuments($dom);
+    private function getJsonPage($ch)
+    {
+        $this->makeJsonDecode($ch);
 
-            ShopItemController::completeShopItemInfo($params);
-            ShopItemPropertiesController::addPropertyNameIfNotExists($params);
+        if (!isset($this->json_page->data)) {
+            unset($this->json_page);
+            $this->getJsonPage($ch);
         }
     }
+
+    private function makeJsonDecode($ch)
+    {
+        $this->json_page = json_decode($ch);
+    }
+
+    private function makeUrl($category_code, $offset = 0, $limit = 50)
+    {
+        return "https://api.petrovich.ru/catalog/v2.3/sections/$category_code?limit=$limit&offset=$offset&sort=popularity_desc&path=%2Fcatalog%2F$category_code%2F&city_code=spb&client_id=pet_site";
+    }
+
 }
