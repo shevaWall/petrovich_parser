@@ -2,7 +2,6 @@ version: "3.3"
 
 services:
   app:
-    #image: library/php:8-fpm-alpine
     build:
       context: ./docker/app
     container_name: app
@@ -28,13 +27,15 @@ services:
     volumes:
       - ./docker/mariadb/dbdata:/var/lib/mysql
 
-  #phpmyadmin:
-  #  image: library/phpmyadmin:fpm-alpine
-  #  restart: always
-  #  ports:
-  #    - 8080:80
-  #  environment:
-  #    - PMA_ARBITRARY=1
+  supervisor:
+    build:
+      context: ./docker/supervisor
+    container_name: supervisor
+    restart: always
+    volumes:
+      - ./:/var/www/
+    networks:
+      - laravel-bridge
 
   nginx:
     image: library/nginx:alpine

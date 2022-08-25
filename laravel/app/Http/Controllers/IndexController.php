@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ParseShopItems;
 use App\Models\Category;
 use App\Models\ShopItem;
 use App\Service\ParserService;
@@ -11,10 +12,7 @@ class IndexController extends Controller
 {
     public function index()
     {
-        /*$parser = new ParserService();
-
-        $parser->getShopItems();*/
-        Artisan::call('parse:shopItems');
+        ParseShopItems::dispatch();
 
         return view('petrovichMainPage');
     }
