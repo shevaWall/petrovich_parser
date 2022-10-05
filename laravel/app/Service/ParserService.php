@@ -3,13 +3,17 @@
 namespace App\Service;
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FailedShopItemParseFromCategoryController;
+use App\Http\Controllers\ParserInformationController;
 use App\Http\Controllers\ShopItemController;
-use App\Http\Controllers\ShopItemPropertiesController;
-use App\Http\Controllers\ShopItemPropertyValueController;
+use App\Jobs\ParseCategories;
+use App\Jobs\ParseShopItems;
 use App\Models\Category;
+use App\Models\FailedShopItemParseFromCategory;
+use App\Models\ParserInformation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use phpQuery;
+use mysql_xdevapi\Exception;
 
 
 class ParserService
@@ -23,7 +27,7 @@ class ParserService
         ShopItemController::destroyAll();
     }
 
-    public function getCategory()
+    public function getCategory(): void
     {
         CategoryController::destroyAll();
 
@@ -40,7 +44,7 @@ class ParserService
         }
     }
 
-    private function getSubCategory($sections, $parent_category_code = '')
+    private function getSubCategory($sections, $parent_category_code = ''): void
     {
         foreach ($sections as $section) {
             CategoryController::addCategory($section, $parent_category_code);
@@ -68,12 +72,10 @@ class ParserService
         \Debugbar::disable();
 
         ShopItemController::destroyAll();
-        ShopItemPropertiesController::destroyAll();
-        ShopItemPropertyValueController::destroyAll();
 
         $categories1lvl = DB::table('categories')
             ->select('id')
-            ->where('parent_id', '')
+            ->where('parent_id', '=', '')
             ->get();
 
         $categories2lvl = array();
@@ -84,6 +86,7 @@ class ParserService
                 ->get();
         }
 
+        // проходим только по категориям второго уровня, т.к. в них выводятся все товары из всех подкатегорий
         foreach ($categories2lvl as $category2lvl) {
             foreach ($category2lvl as $category) {
                 $api_url = $this->makeUrl($category->code);
@@ -91,7 +94,7 @@ class ParserService
                 $this->getJsonPage($ch);
 
                 if ($this->json_page->state->code != 20001) {
-                    dd($this->json_page);
+                    $this->createFailedParseShopItemsFromCategory($category->code, $this->json_page->state->title);
                 } else {
                     if (!is_null($this->json_page->data->products) && count($this->json_page->data->products)) {
                         $page_qty = ceil($this->json_page->data->pagination->products_count / 50);
@@ -112,37 +115,69 @@ class ParserService
         }
     }
 
-    private function grabItems()
+    private function grabItems(): void
     {
         $shopItems = array();
-        $products = $this->json_page->data->products;
+            if(isset($this->json_page->data->products)){
+                $products = $this->json_page->data->products;
 
-        foreach ($products as $k => $product) {
-            $shopItems[$k] = $product;
-        }
-        ShopItemController::addShopItems($shopItems);
-        unset($shopItems);
-        unset($this->json_page);
+                foreach ($products as $k => $product) {
+                    $shopItems[$k] = $product;
+                }
+                ShopItemController::addShopItems($shopItems);
+                unset($shopItems);
+                unset($this->json_page);
+            }else{
+                $this->createFailedParseShopItemsFromCategory(0, $this->json_page->state->title);
+            }
     }
 
-    private function getJsonPage($ch)
+    private function getJsonPage($ch, $qty_repeats = 0): void
     {
         $this->makeJsonDecode($ch);
 
-        if (!isset($this->json_page->data)) {
+        if (!isset($this->json_page->data) && $this->json_page->state->code != 0) {
+            $qty_repeats += 1;
             unset($this->json_page);
             $this->getJsonPage($ch);
         }
     }
 
-    private function makeJsonDecode($ch)
+    private function makeJsonDecode($ch): void
     {
         $this->json_page = json_decode($ch);
     }
 
-    private function makeUrl($category_code, $offset = 0, $limit = 50)
+    private function makeUrl($category_code, $offset = 0, $limit = 50): string
     {
         return "https://api.petrovich.ru/catalog/v2.3/sections/$category_code?limit=$limit&offset=$offset&sort=popularity_desc&path=%2Fcatalog%2F$category_code%2F&city_code=spb&client_id=pet_site";
+    }
+
+    private function createFailedParseShopItemsFromCategory($category_code, $message): void
+    {
+        FailedShopItemParseFromCategory::create($category_code, $message);
+    }
+
+    public function dispatchCategories()
+    {
+        // todo: блокировать одновременный запуск нескольких задач
+        /*$parserInformation = new ParserInformation();
+        $parserInformation->setParserStatus('category', 1);*/
+
+        ParseCategories::dispatch();
+        return redirect()->route('index');
+    }
+
+    public function dispatchShopItems()
+    {
+        // todo: блокировать одновременный запуск нескольких задач
+        /* $parserInformation = new ParserInformationController();
+         $parserInformation->setParserStatus('shopItems', 1);*/
+
+        ParseShopItems::dispatch();
+        return redirect()->route('index');
+
+        //todo:: снятие блокировки по завершению задачи
     }
 
 }

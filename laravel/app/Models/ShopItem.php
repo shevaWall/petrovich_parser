@@ -11,18 +11,22 @@ class ShopItem extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'properties' => 'array',
+    ];
+
     public function category()
     {
-        return $this->belongsTo(Category::class, 'id', 'category_id')->withDefault([
-            'name' => 'без категории'
-        ]);
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
-    public function propertiesValue(){
-        return $this->hasMany(ShopItemPropertyValue::class, 'id', 'shop_item_id');
+    public function setPropertiesAttribute($value)
+    {
+        $this->attributes['properties'] = json_encode($value);
     }
 
-    public function deleteAll(){
+    public function deleteAll()
+    {
         $shopItem = self::find($this->id);
 
         $shopItem->propertiesValue()->delete();

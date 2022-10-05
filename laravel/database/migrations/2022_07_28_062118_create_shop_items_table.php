@@ -24,6 +24,7 @@ class CreateShopItemsTable extends Migration
             $table->text('preview_description')->nullable();
             $table->text('description')->nullable();
             $table->text('details')->nullable();
+            $table->json('properties')->nullable();
             $table->timestamps();
         });
     }

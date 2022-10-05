@@ -5,35 +5,33 @@
         <div class="col-12 text-end">Последнее обновление: {dd.mm.yyyy} {hh:mm}</div>
 
         <div class="col">
-            <button type="button" class="btn btn-primary" id="getCategory" data-delete-message="все текущие категории"
-                    @if($category['status']) disabled @endif
-                    data-url="{{route('parser.parseCategories')}}">Получить категории
-            </button>
-            @if(isset($category['count']))
-                <p>В базе данных <b>{{$category['count']}}</b> категорий.</p>
-            @endif
-            @if($category['status'])
+            <a href="{{route('dispatch.categories')}}" type="button"
+               class="btn btn-primary @if($parserInformation[0]->status) disabled @endif" id="getCategory"
+            >Получить категории</a>
+
+            <p>В базе данных <b>{{$categoryCount}}</b> категорий.</p>
+            @if($parserInformation[0]->status)
                 <div class="progress">
-                    <div class="progress-bar" role="progressbar" style="width: {{$category['progressbar']}}%;"
-                         aria-valuenow="{{$category['progressbar']}}" aria-valuemin="0"
-                         aria-valuemax="100">{{$category['progressbar']}}%
-                    </div>
+{{--                    todo: сделать прогрессбар--}}
+                    {{--  <div class="progress-bar" role="progressbar" style="width: {{$category['progressbar']}}%;"
+                           aria-valuenow="{{$category['progressbar']}}" aria-valuemin="0"
+                           aria-valuemax="100">{{$category['progressbar']}}%
+                      </div>--}}
                 </div>
             @endif
         </div>
         <div class="col">
-            <button type="button" class="btn btn-primary" id="getShopItems" data-delete-message="все текущие товары"
-                    data-url="{{route('parser.parseShopItems')}}">Получить товары
-            </button>
-            @if(isset($shopItems['count']))
-                <p>В базе данных <b>{{$shopItems['count']}}</b> товаров.</p>
-            @endif
-            @if($shopItems['status'])
+            <a href="{{route('dispatch.shopItems')}}" type="button"
+               class="btn btn-primary @if($parserInformation[1]->status) disabled @endif" id="getShopItems"
+            >Получить товары</a>
+
+            <p>В базе данных <b>{{$shopItemCount}}</b> товаров.</p>
+            @if($parserInformation[1]->status)
                 <div class="progress">
-                    <div class="progress-bar" role="progressbar" style="width: {{$shopItems['progressbar']}}%;"
-                         aria-valuenow="{{$shopItems['progressbar']}}" aria-valuemin="0"
-                         aria-valuemax="100">{{$shopItems['progressbar']}}%
-                    </div>
+                    {{-- <div class="progress-bar" role="progressbar" style="width: {{$shopItems['progressbar']}}%;"
+                          aria-valuenow="{{$shopItems['progressbar']}}" aria-valuemin="0"
+                          aria-valuemax="100">{{$shopItems['progressbar']}}%
+                     </div>--}}
                 </div>
             @endif
         </div>

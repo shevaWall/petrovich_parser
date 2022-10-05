@@ -36,23 +36,13 @@ class ShopItemController extends Controller
                 'price_gold' => $shopItem->price->gold,
                 'price_retail' => $shopItem->price->retail,
                 'price_per' => $shopItem->unit_title,
+                'properties' => $shopItem->properties,
             ]);
-
-            if (isset($shopItem->properties)) {
-                ShopItemPropertiesController::addPropertyName($shopItem->properties);
-                ShopItemPropertyValueController::addPropertyValue($shopItem->properties, $new_shopItem->id);
-            }
         }
     }
 
-    // автоматически запускается после выполнения getShopItems класса app/service/ParserService
-    public function completeShopItemInfo($params)
-    {
-        $shopItem = ShopItem::find($params['shop_item_id']);
-
-        $shopItem->description = $params['description'];
-        $shopItem->details = $params['details'];
-        $shopItem->save();
+    public function getShopItemInfo($categoryCode, $shopItemCode){
+        dump(ShopItem::where('code', '=', $shopItemCode)->first());
     }
 
     public static function destroyAll()
