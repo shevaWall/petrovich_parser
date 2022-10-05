@@ -32,4 +32,8 @@ class ShopItem extends Model
         $shopItem->propertiesValue()->delete();
         $shopItem->delete();
     }
+
+    public function images(){
+        return $this->hasMany(ShopItemImages::class, 'shopItem_id', 'id');
+    }
 }

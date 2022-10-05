@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
+
     private $categories_id = array();
 
     public function addCategory($section, $parent_code = '')
@@ -44,8 +45,10 @@ class CategoryController extends Controller
             ->paginate(15);
 
         // т.к. получаем shopItems из запроса к БД, а не через модель - принудительно преобразуем дополнительные свойства через json
+        // и подгружаем изображения
         foreach ($shopItems->items() as $k => $shopItem) {
             $shopItem->properties = json_decode($shopItem->properties);
+            $shopItem->image = DB::table('shop_item_images')->where('shopItem_id',$shopItem->id)->first();
             $shopItems->items()[$k] = $shopItem;
         }
 

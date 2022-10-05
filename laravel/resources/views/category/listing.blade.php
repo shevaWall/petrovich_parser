@@ -16,9 +16,11 @@
             <div class="card mb-3">
                 <div class="row g-0">
                     <div class="col-md-4">
-                        @if(!isset($shopItem->img))
+                        @if(!isset($shopItem->image))
                             <img src="/images/no_photo.png" class="img-fluid rounded-start"
                                  alt="изображение отсутствует">
+                        @else
+                            <img src="{{asset('storage/shopItem_images/'.$shopItem->image->file_name)}}" class="img-fluid rounded-start" />
                         @endif
                     </div>
                     <div class="col-md-8">

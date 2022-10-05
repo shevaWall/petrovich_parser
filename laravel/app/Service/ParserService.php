@@ -11,6 +11,7 @@ use App\Jobs\ParseShopItems;
 use App\Models\Category;
 use App\Models\FailedShopItemParseFromCategory;
 use App\Models\ParserInformation;
+use App\Models\shopItemImages;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use mysql_xdevapi\Exception;
