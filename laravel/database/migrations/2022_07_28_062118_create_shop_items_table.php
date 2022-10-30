@@ -21,10 +21,10 @@ class CreateShopItemsTable extends Migration
             $table->string('price_gold');
             $table->string('price_retail');
             $table->string('price_per');
-            $table->text('preview_description')->nullable();
             $table->text('description')->nullable();
             $table->text('details')->nullable();
             $table->json('properties')->nullable();
+            $table->json('source_image')->nullable();
             $table->timestamps();
         });
     }

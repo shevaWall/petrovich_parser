@@ -13,6 +13,7 @@ class ShopItem extends Model
 
     protected $casts = [
         'properties' => 'array',
+        'source_image' => 'array',
     ];
 
     public function category()
@@ -23,7 +24,9 @@ class ShopItem extends Model
     public function setPropertiesAttribute($value)
     {
         $this->attributes['properties'] = json_encode($value);
+        $this->attributes['source_image'] = json_encode($value);
     }
+
 
     public function deleteAll()
     {
@@ -33,7 +36,8 @@ class ShopItem extends Model
         $shopItem->delete();
     }
 
-    public function images(){
+    public function images()
+    {
         return $this->hasMany(ShopItemImages::class, 'shopItem_id', 'id');
     }
 }

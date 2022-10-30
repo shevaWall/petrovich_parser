@@ -32,6 +32,8 @@ Route::group([
         ->name('parseCategories');
     Route::get("shopItems", [ParserService::class, "getShopItems"])
         ->name('parseShopItems');
+    Route::get("grabImages", [ShopItemController::class, "grabImages"])
+            ->name('grabImages');
     Route::delete('deleteAllCategoriesAndShopItems', [ParserService::class, "deleteAllCategoriesAndShopItems"])
         ->name('deleteAll');
 
@@ -45,5 +47,7 @@ Route::group([
     Route::get("categories", [ParserService::class, "dispatchCategories"])
         ->name('categories');
     Route::get("shopItems", [ParserService::class, "dispatchShopItems"])
-            ->name('shopItems');
+        ->name('shopItems');
+    Route::get("shopImages", [ParserService::class, "dispatchShopImages"])
+            ->name('shopImages');
 });

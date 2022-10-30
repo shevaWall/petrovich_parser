@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Service\ParserService;
+use App\Http\Controllers\ShopItemController;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,20 +11,19 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ParseShopItems implements ShouldQueue, ShouldBeUnique
+class ProcessImageDownload implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public $timeout = 7198;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
+
     public function __construct()
     {
-        //
+
     }
 
     /**
@@ -34,9 +33,10 @@ class ParseShopItems implements ShouldQueue, ShouldBeUnique
      */
     public function handle()
     {
-        Log::info("Запущен парсер по товарам.");
+        Log::info("Запущен парсер по загрузке изображений.");
 
-        $parser = new ParserService();
-        $parser->getShopItems();
+        ShopItemController::grabImages();
+
+        Log::info("Парсер по загрузке изображений закончил работу.");
     }
 }

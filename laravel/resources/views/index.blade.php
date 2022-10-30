@@ -24,7 +24,7 @@
             <a href="{{route('dispatch.shopItems')}}" type="button"
                class="btn btn-primary @if($parserInformation[1]->status) disabled @endif" id="getShopItems"
             >Получить товары</a>
-
+{{--            todo: сделать список категорий второго уровня, при полном завершении прогона по категории ставить галочку для визуального контроля--}}
             <p>В базе данных <b>{{$shopItemCount}}</b> товаров.</p>
             @if($parserInformation[1]->status)
                 <div class="progress">

@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessDownload;
+use App\Jobs\ProcessImageDownload;
 use App\Models\ShopItem;
 use App\Models\shopItemImages;
+use App\Service\ParserService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ShopItemController extends Controller
@@ -37,9 +41,10 @@ class ShopItemController extends Controller
                 'price_retail' => $shopItem->price->retail,
                 'price_per' => $shopItem->unit_title,
                 'properties' => $shopItem->properties,
+                'source_image' => $shopItem->images,
             ]);
 
-            self::grabImages($new_shopItem->id, $shopItem->images);
+//            ProcessImageDownload::dispatch($new_shopItem->id, $shopItem->images)->onQueue('images');
         }
     }
 
@@ -51,30 +56,45 @@ class ShopItemController extends Controller
 
     public static function destroyAll()
     {
+        Storage::disk('public')->deleteDirectory('shopItem_images');
+        sleep(1);
+        Storage::disk('public')->deleteDirectory('shopItem_images');
+
+
         ShopItem::truncate();
+        ShopItemImages::truncate();
     }
 
-    private function grabImages($shopItem_id, $images)
+    static public function grabImages()
     {
-        if(count($images)){
-            foreach ($images as $image) {
-                $fileName = explode('/', $image)[4];
-
-                self::file_get_image($image, $fileName);
-
-                ShopItemImages::create([
-                    'shopItem_id' => $shopItem_id,
-                    'file_name' => "$fileName.jpg"
-                ]);
+        $qny = 0;
+        ShopItem::chunk(200, function($shopItems) use ($qny) {
+            foreach($shopItems as $shopItem){
+                if (!is_null($shopItem->source_image)) {
+                    if (count($shopItem->source_image)) {
+                        foreach ($shopItem->source_image as $image) {
+                            $fileName = explode('/', $image)[4];
+                            $shopItem_id = $shopItem->id;
+                            ProcessDownload::dispatch($shopItem_id, $image, $fileName);
+                        }
+                    }
+                }
             }
-        }
+            $qny += 200;
+            Log::info("Обработано $qny записей");
+        });
+
     }
 
-    private function file_get_image($image_link, $f_name){
-
-        //todo: переделать загрузку изображений - вылетает по таймауте
+    static public function downloadAndAttacheImage($shopItem_id, $image_link, $f_name)
+    {
         $url = "https:$image_link";
-        $image = file_get_contents($url);
+        $image = ParserService::runCurl($url);
         Storage::disk('public')->put("shopItem_images/$f_name.jpg", $image);
+
+        ShopItemImages::create([
+            'shopItem_id' => $shopItem_id,
+            'file_name' => "$f_name.jpg"
+        ]);
     }
 }
