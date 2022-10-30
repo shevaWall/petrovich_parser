@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ShopItemController;
 use Illuminate\Support\Facades\Route;
 use App\Service\ParserService;
@@ -49,5 +52,32 @@ Route::group([
     Route::get("shopItems", [ParserService::class, "dispatchShopItems"])
         ->name('shopItems');
     Route::get("shopImages", [ParserService::class, "dispatchShopImages"])
-            ->name('shopImages');
+        ->name('shopImages');
+});
+
+
+Route::group([
+    'middleware' => 'auth',
+    'prefix' => 'admin',
+    'as' => 'admin.',
+], function () {
+    Route::get("/", [AdminController::class, "index"])
+        ->name('');
+
+    Route::get("login", [LoginController::class, "showLoginForm"])
+        ->name('login')
+        ->withoutMiddleware('auth');
+    Route::post("login", [LoginController::class, "login"])
+        ->name('login')
+        ->withoutMiddleware('auth');
+
+    Route::get("logout", [LoginController::class, "logout"])
+        ->name('logout');
+
+    Route::get("registration", [RegistrationController::class, "showRegistrationForm"])
+        ->name('registration')
+        ->withoutMiddleware('auth');
+    Route::post("registration", [RegistrationController::class, "registration"])
+        ->name('registration')
+        ->withoutMiddleware('auth');
 });
