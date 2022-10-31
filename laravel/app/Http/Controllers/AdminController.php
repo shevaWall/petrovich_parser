@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
     public function index(){
-        dump('U can see this only if ur is administrator');
+        return view('admin.index');
     }
+
+
 }

@@ -1,50 +1,196 @@
 @extends('admin.layout')
 
 @section('content')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <div class="auth-page">
+        <div class="container-fluid p-0">
+            <div class="row g-0">
+                <div class="col-xxl-3 col-lg-4 col-md-5">
+                    <div class="auth-full-page-content d-flex p-sm-5 p-4">
+                        <div class="w-100">
+                            <div class="d-flex flex-column h-100">
+                                <div class="mb-4 mb-md-5 text-center">
+                                    <a href="{{route('admin.')}}" class="d-block auth-logo">
+                                        <img src="{{asset('images/admin/logo-sm.svg')}}" alt="" height="28"> <span
+                                            class="logo-txt">Minia</span>
+                                    </a>
+                                </div>
+                                <div class="auth-content my-auto">
+                                    <div class="text-center">
+                                        <h5 class="mb-0">Register Account</h5>
+                                        <p class="text-muted mt-2">Get your free Minia account now.</p>
+                                    </div>
+                                    <form class="needs-validation custom-form mt-4 pt-2"
+                                          action="{{route('admin.registration')}}" method="post">
+                                        @csrf
+                                        <div class="mb-3 @error('email') has-error @enderror">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email"
+                                                   placeholder="Enter email" required name="email"
+                                                   value="">
+                                            @error('email')
+                                            <span class="text-danger">{{$message}}</span>
+                                            @enderror
+                                        </div>
 
-    <div class="row">
-        <div class="col-md-offset-3 col-md-6">
-            <div class="tab" role="tabpanel">
-                <ul class="nav nav-tabs" role="tablist">
-                    {{--<li role="presentation" class="active">
-                        <a href="#Section1" aria-controls="home" role="tab" data-toggle="tab">sign in</a>
-                    </li>--}}
-                    <li role="presentation" class="active">
-                        <a href="#Section2" aria-controls="profile" role="tab" data-toggle="tab">sign up</a>
-                    </li>
-                </ul>
-                <div class="tab-content tabs">
-                    <div role="tabpanel" class="tab-pane fade in active" id="Section2">
-                        <form class="form-horizontal" method="post" action="{{route('admin.registration')}}">
-                            @csrf
-                            <div class="form-group">
-                                <label for="SingUpName">Your name</label>
-                                <input type="text" class="form-control" id="SingUpName" name="name">
-                                @error('name')
-                                    <div class="alert alert-danger">{{$message}}</div>
-                                @enderror
+                                        <div class="mb-3 @error('name') has-error @enderror">
+                                            <label for="name" class="form-label">Your name</label>
+                                            <input type="text" class="form-control" id="name"
+                                                   placeholder="Enter name" required name="name"
+                                                   value="">
+                                            @error('name')
+                                            <span class="text-danger">{{$message}}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3 @error('password') has-error @enderror">
+                                            <label for="password" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="password"
+                                                   placeholder="Enter password" required name="password"
+                                                   value="">
+                                            @error('password')
+                                            <span class="text-danger">{{$message}}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <button class="btn btn-primary w-100 waves-effect waves-light"
+                                                    type="submit" name="sendMe" value="1">Register
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <div class="mt-5 text-center">
+                                        <p class="text-muted mb-0">Already have an account ? <a
+                                                href="{{route('admin.login')}}"
+                                                class="text-primary fw-semibold">
+                                                Login </a></p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 mt-md-5 text-center">
+                                    <p class="mb-0">©
+                                        <script>
+                                            document.write(new Date().getFullYear())
+                                        </script>
+                                        Minia . Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand
+                                    </p>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="SingUpEmail">Email</label>
-                                <input type="email" class="form-control" id="SingUpEmail" name="email">
-                                @error('email')
-                                    <div class="alert alert-danger">{{$message}}</div>
-                                @enderror
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-9 col-lg-8 col-md-7">
+                    <div class="auth-bg pt-md-5 p-4 d-flex">
+                        <div class="bg-overlay bg-primary"></div>
+                        <ul class="bg-bubbles">
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                        <div class="row justify-content-center align-items-center">
+                            <div class="col-xl-7">
+                                <div class="p-0 p-sm-4 px-xl-0">
+                                    <div id="reviewcarouselIndicators" class="carousel slide" data-bs-ride="carousel">
+                                        <div
+                                            class="carousel-indicators carousel-indicators-rounded justify-content-start ms-0 mb-0">
+                                            <button type="button" data-bs-target="#reviewcarouselIndicators"
+                                                    data-bs-slide-to="0" class="active" aria-current="true"
+                                                    aria-label="Slide 1"></button>
+                                            <button type="button" data-bs-target="#reviewcarouselIndicators"
+                                                    data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                            <button type="button" data-bs-target="#reviewcarouselIndicators"
+                                                    data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                        </div>
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
+                                                <div class="testi-contain text-white">
+                                                    <i class="bx bxs-quote-alt-left text-success display-6"></i>
+
+                                                    <h4 class="mt-4 fw-medium lh-base text-white">“I feel confident
+                                                        imposing change
+                                                        on myself. It's a lot more progressing fun than looking back.
+                                                        That's why
+                                                        I ultricies enim
+                                                        at malesuada nibh diam on tortor neaded to throw curve balls.”
+                                                    </h4>
+                                                    <div class="mt-4 pt-3 pb-5">
+                                                        <div class="d-flex align-items-start">
+                                                            <div class="flex-shrink-0">
+                                                                <img src="{{asset('images/admin/users/avatar-1.jpg')}}"
+                                                                     class="avatar-md img-fluid rounded-circle"
+                                                                     alt="...">
+                                                            </div>
+                                                            <div class="flex-grow-1 ms-3 mb-4">
+                                                                <h5 class="font-size-18 text-white">Richard Drews
+                                                                </h5>
+                                                                <p class="mb-0 text-white-50">Web Designer</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="carousel-item">
+                                                <div class="testi-contain text-white">
+                                                    <i class="bx bxs-quote-alt-left text-success display-6"></i>
+
+                                                    <h4 class="mt-4 fw-medium lh-base text-white">“Our task must be to
+                                                        free ourselves by widening our circle of compassion to embrace
+                                                        all living
+                                                        creatures and
+                                                        the whole of quis consectetur nunc sit amet semper justo. nature
+                                                        and its beauty.”</h4>
+                                                    <div class="mt-4 pt-3 pb-5">
+                                                        <div class="d-flex align-items-start">
+                                                            <div class="flex-shrink-0">
+                                                                <img src="{{asset('images/admin/users/avatar-2.jpg')}}"
+                                                                     class="avatar-md img-fluid rounded-circle"
+                                                                     alt="...">
+                                                            </div>
+                                                            <div class="flex-grow-1 ms-3 mb-4">
+                                                                <h5 class="font-size-18 text-white">Rosanna French
+                                                                </h5>
+                                                                <p class="mb-0 text-white-50">Web Developer</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="carousel-item">
+                                                <div class="testi-contain text-white">
+                                                    <i class="bx bxs-quote-alt-left text-success display-6"></i>
+
+                                                    <h4 class="mt-4 fw-medium lh-base text-white">“I've learned that
+                                                        people will forget what you said, people will forget what you
+                                                        did,
+                                                        but people will never forget
+                                                        how donec in efficitur lectus, nec lobortis metus you made them
+                                                        feel.”</h4>
+                                                    <div class="mt-4 pt-3 pb-5">
+                                                        <div class="d-flex align-items-start">
+                                                            <img src="{{asset('images/admin/users/avatar-3.jpg')}}"
+                                                                 class="avatar-md img-fluid rounded-circle" alt="...">
+                                                            <div class="flex-1 ms-3 mb-4">
+                                                                <h5 class="font-size-18 text-white">Ilse R. Eaton</h5>
+                                                                <p class="mb-0 text-white-50">Manager
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="SingUpPassword">Password</label>
-                                <input type="password" class="form-control" id="SingUpPassword" name="password">
-                                @error('password')
-                                    <div class="alert alert-danger">{{$message}}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-default" name="sendMe" value="1">Sign up</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

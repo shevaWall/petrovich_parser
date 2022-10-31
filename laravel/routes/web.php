@@ -6,6 +6,7 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ShopItemController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Service\ParserService;
 
@@ -62,7 +63,7 @@ Route::group([
     'as' => 'admin.',
 ], function () {
     Route::get("/", [AdminController::class, "index"])
-        ->name('');
+        ->name('index');
 
     Route::get("login", [LoginController::class, "showLoginForm"])
         ->name('login')
@@ -80,4 +81,14 @@ Route::group([
     Route::post("registration", [RegistrationController::class, "registration"])
         ->name('registration')
         ->withoutMiddleware('auth');
+
+    Route::get("profile", [UserController::class, "profile"])
+        ->name('profile');
+
+    Route::get("users", [UserController::class, "users"])
+        ->name('users');
+
+    Route::fallback(function(){
+       return view('admin.errors.404');
+    });
 });

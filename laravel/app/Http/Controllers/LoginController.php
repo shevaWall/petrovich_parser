@@ -20,11 +20,11 @@ class LoginController extends Controller
         if (Auth::attempt($formFields)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('admin.');
+            return redirect()->intended('admin');
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.'
+            'email' => 'The email do not match our records.'
         ]);
     }
 
