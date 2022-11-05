@@ -82,11 +82,25 @@ Route::group([
         ->name('registration')
         ->withoutMiddleware('auth');
 
+    // профиль авторизированного пользователя
     Route::get("profile", [UserController::class, "profile"])
         ->name('profile');
 
     Route::get("users", [UserController::class, "users"])
         ->name('users');
+    Route::get("users/create", [UserController::class, "showCreateForm"])
+        ->name('users.create');
+    Route::post("users/create", [UserController::class, "createUser"])
+        ->name('users.create');
+    // профиль другого пользователя системы
+    Route::get("users/{User}", [UserController::class, "profile"])
+        ->name('users.profile');
+    Route::get("users/{User}/edit", [UserController::class, "showEditForm"])
+        ->name('users.edit');
+    Route::post("users/{User}/edit", [UserController::class, "editUser"])
+        ->name('users.edit' );
+    Route::get("users/{User}/delete", [UserController::class, "delete"])
+        ->name('users.delete');
 
     Route::fallback(function(){
        return view('admin.errors.404');

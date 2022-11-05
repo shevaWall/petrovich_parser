@@ -11,7 +11,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         if(Auth::check())
-            return redirect()->route('admin.');
+            return redirect()->route('admin.index');
 
         $formFields = $request->only([
             'email', 'password'
@@ -20,7 +20,7 @@ class LoginController extends Controller
         if (Auth::attempt($formFields)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('admin');
+            return redirect()->intended('admin.index');
         }
 
         return back()->withErrors([
@@ -31,7 +31,7 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::check())
-            return redirect()->route('admin.');
+            return redirect()->route('admin.index');
 
         return view('admin.login.loginForm');
     }

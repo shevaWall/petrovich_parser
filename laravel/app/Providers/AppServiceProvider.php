@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         $categories = Category::where('parent_id', '')->get();
         View::share('categories', $categories);
 
-        View::composer(['admin.menu.header', 'admin.userProfile'], function($view){
+        View::composer(['admin.menu.header', 'admin.user.profile'], function($view){
            $view->with('user', Auth::user());
         });
     }

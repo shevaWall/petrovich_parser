@@ -39,14 +39,12 @@
                                 <span class="badge bg-soft-success text-success">+$20.9k</span>
                                 <span class="ms-1 text-muted font-size-13">Since last week</span>
                             </div>
-                        </div><!-- end card body -->
-                    </div><!-- end card -->
-                </div><!-- end col -->
+                        </div>
+                    </div>
+                </div>
 
                 <div class="col-xl-3 col-md-6">
-                    <!-- card -->
                     <div class="card card-h-100">
-                        <!-- card body -->
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-6">
@@ -63,14 +61,12 @@
                                 <span class="badge bg-soft-danger text-danger">-29 Trades</span>
                                 <span class="ms-1 text-muted font-size-13">Since last week</span>
                             </div>
-                        </div><!-- end card body -->
-                    </div><!-- end card -->
-                </div><!-- end col-->
+                        </div>
+                    </div>
+                </div>
 
                 <div class="col-xl-3 col-md-6">
-                    <!-- card -->
                     <div class="card card-h-100">
-                        <!-- card body -->
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-6">
@@ -87,14 +83,12 @@
                                 <span class="badge bg-soft-success text-success">+ $2.8k</span>
                                 <span class="ms-1 text-muted font-size-13">Since last week</span>
                             </div>
-                        </div><!-- end card body -->
-                    </div><!-- end card -->
-                </div><!-- end col -->
+                        </div>
+                    </div>
+                </div>
 
                 <div class="col-xl-3 col-md-6">
-                    <!-- card -->
                     <div class="card card-h-100">
-                        <!-- card body -->
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-6">
@@ -111,16 +105,14 @@
                                 <span class="badge bg-soft-success text-success">+2.95%</span>
                                 <span class="ms-1 text-muted font-size-13">Since last week</span>
                             </div>
-                        </div><!-- end card body -->
-                    </div><!-- end card -->
-                </div><!-- end col -->
-            </div><!-- end row-->
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col-xl-5">
-                    <!-- card -->
                     <div class="card card-h-100">
-                        <!-- card body -->
                         <div class="card-body">
                             <div class="d-flex flex-wrap align-items-center mb-4">
                                 <h5 class="card-title me-2">Wallet Balance</h5>
@@ -177,15 +169,12 @@
                             </div>
                         </div>
                     </div>
-                    <!-- end card -->
                 </div>
-                <!-- end col -->
+
                 <div class="col-xl-7">
                     <div class="row">
                         <div class="col-xl-8">
-                            <!-- card -->
                             <div class="card card-h-100">
-                                <!-- card body -->
                                 <div class="card-body">
                                     <div class="d-flex flex-wrap align-items-center mb-4">
                                         <h5 class="card-title me-2">Invested Overview</h5>
@@ -241,12 +230,9 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- end col -->
 
                         <div class="col-xl-4">
-                            <!-- card -->
                             <div class="card bg-primary text-white shadow-primary card-h-100">
-                                <!-- card body -->
                                 <div class="card-body p-0">
                                     <div id="carouselExampleCaptions" class="carousel slide text-center widget-carousel"
                                          data-bs-ride="carousel">
@@ -270,7 +256,6 @@
                                                             class="mdi mdi-arrow-right ms-1"></i></button>
                                                 </div>
                                             </div>
-                                            <!-- end carousel-item -->
                                             <div class="carousel-item">
                                                 <div class="text-center p-4">
                                                     <i class="mdi mdi-ethereum widget-box-1-icon"></i>
@@ -289,7 +274,6 @@
                                                             class="mdi mdi-arrow-right ms-1"></i></button>
                                                 </div>
                                             </div>
-                                            <!-- end carousel-item -->
                                             <div class="carousel-item">
                                                 <div class="text-center p-4">
                                                     <i class="mdi mdi-litecoin widget-box-1-icon"></i>
@@ -309,9 +293,7 @@
                                                             class="mdi mdi-arrow-right ms-1"></i></button>
                                                 </div>
                                             </div>
-                                            <!-- end carousel-item -->
                                         </div>
-                                        <!-- end carousel-inner -->
 
                                         <div class="carousel-indicators carousel-indicators-rounded">
                                             <button type="button" data-bs-target="#carouselExampleCaptions"
@@ -322,26 +304,17 @@
                                             <button type="button" data-bs-target="#carouselExampleCaptions"
                                                     data-bs-slide-to="2" aria-label="Slide 3"></button>
                                         </div>
-                                        <!-- end carousel-indicators -->
                                     </div>
-                                    <!-- end carousel -->
                                 </div>
-                                <!-- end card body -->
                             </div>
-                            <!-- end card -->
                         </div>
-                        <!-- end col -->
                     </div>
-                    <!-- end row -->
                 </div>
-                <!-- end col -->
-            </div> <!-- end row-->
+            </div>
 
             <div class="row">
                 <div class="col-xl-8">
-                    <!-- card -->
                     <div class="card">
-                        <!-- card body -->
                         <div class="card-body">
                             <div class="d-flex flex-wrap align-items-center mb-4">
                                 <h5 class="card-title me-2">Market Overview</h5>
@@ -475,16 +448,11 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- end card -->
                     </div>
-                    <!-- end col -->
                 </div>
-                <!-- end row-->
 
                 <div class="col-xl-4">
-                    <!-- card -->
                     <div class="card">
-                        <!-- card body -->
                         <div class="card-body">
                             <div class="d-flex flex-wrap align-items-center mb-4">
                                 <h5 class="card-title me-2">Sales by Locations</h5>
@@ -531,13 +499,9 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- end card body -->
                     </div>
-                    <!-- end card -->
                 </div>
-                <!-- end col -->
             </div>
-            <!-- end row-->
 
             <div class="row">
                 <div class="col-xl-4">
@@ -555,7 +519,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div><!-- end card header -->
+                        </div>
 
                         <div class="card-body">
                             <div class="tab-content">
@@ -607,7 +571,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- end tab pane -->
+
                                 <div class="tab-pane" id="sell-tab" role="tabpanel">
                                     <div class="float-end ms-2">
                                         <h5 class="font-size-14"><i
@@ -617,7 +581,6 @@
                                     <h5 class="font-size-14 mb-4">Sell Coins</h5>
 
                                     <div>
-
                                         <div class="form-group mb-3">
                                             <label>Wallet ID :</label>
                                             <input type="email" class="form-control" placeholder="1cvb254ugxvfcd280ki">
@@ -656,15 +619,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- end tab pane -->
                             </div>
-                            <!-- end tab content -->
                         </div>
-                        <!-- end card body -->
                     </div>
-                    <!-- end card -->
                 </div>
-                <!-- end col -->
 
                 <div class="col-xl-4">
                     <div class="card">
@@ -692,9 +650,8 @@
                                         </a>
                                     </li>
                                 </ul>
-                                <!-- end nav tabs -->
                             </div>
-                        </div><!-- end card header -->
+                        </div>
 
                         <div class="card-body px-0">
                             <div class="tab-content">
@@ -1121,7 +1078,6 @@
                                         </table>
                                     </div>
                                 </div>
-                                <!-- end tab pane -->
                                 <div class="tab-pane" id="transactions-sell-tab" role="tabpanel">
                                     <div class="table-responsive px-3" data-simplebar style="max-height: 352px;">
                                         <table class="table align-middle table-nowrap table-borderless">
@@ -1333,15 +1289,10 @@
                                         </table>
                                     </div>
                                 </div>
-                                <!-- end tab pane -->
                             </div>
-                            <!-- end tab content -->
                         </div>
-                        <!-- end card body -->
                     </div>
-                    <!-- end card -->
                 </div>
-                <!-- end col -->
 
                 <div class="col-xl-4">
                     <div class="card">
@@ -1355,7 +1306,7 @@
                                     <option value="Month">Last Month</option>
                                 </select>
                             </div>
-                        </div><!-- end card header -->
+                        </div>
 
                         <div class="card-body px-0">
                             <div class="px-3" data-simplebar style="max-height: 352px;">
@@ -1598,14 +1549,9 @@
                                 </ul>
                             </div>
                         </div>
-                        <!-- end card body -->
                     </div>
-                    <!-- end card -->
                 </div>
-                <!-- end col -->
             </div>
-            <!-- end row -->
         </div>
-        <!-- container-fluid -->
     </div>
 @endsection

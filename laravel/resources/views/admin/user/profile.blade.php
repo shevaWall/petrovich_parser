@@ -1,12 +1,21 @@
 @extends('admin.layout')
 
 @section('content')
+    @php
+        $user = (!isset($User)) ? $user : $User;
+    @endphp
     <div class="page-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                         <h4 class="mb-sm-0 font-size-18">Profile</h4>
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="{{route('admin.users')}}">Пользователи</a></li>
+                                <li class="breadcrumb-item active">Профиль пользователя</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -35,7 +44,7 @@
                                                         <i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Development
                                                     </div>
                                                     <div>
-                                                        <i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>phyllisgatlin@minia.com
+                                                        <i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>{{$user->email}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -57,9 +66,10 @@
                                                     <i class="bx bx-dots-horizontal-rounded"></i>
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="#">Action</a></li>
+                                                    <li><a class="dropdown-item" href="{{route('admin.users.edit', $user->id)}}">Редактировать</a></li>
                                                     <li><a class="dropdown-item" href="#">Another action</a></li>
-                                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                                    <div class="dropdown-divider"></div>
+                                                    <li><a class="dropdown-item bg-danger text-white" href="{{route('admin.users.delete', $user->id)}}">Удалить</a></li>
                                                 </ul>
                                             </div>
                                         </div>

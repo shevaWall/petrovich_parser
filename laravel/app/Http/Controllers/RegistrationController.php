@@ -19,7 +19,7 @@ class RegistrationController extends Controller
     public function registration(Request $request)
     {
         if (Auth::check())
-            return redirect()->route('admin.');
+            return redirect()->route('admin.index');
 
         $validateFields = $request->validate([
             'name' => 'required',
@@ -31,7 +31,7 @@ class RegistrationController extends Controller
             return redirect()
                 ->route('admin.registration')
                 ->withErrors([
-                    'email' => 'Такой пользователь уже существует'
+                    'email' => 'Такой адрес электронной почты уже зарегистрирован'
                 ]);
         }
 
