@@ -2,8 +2,9 @@ version: "3.3"
 
 services:
   app:
-    build:
-      context: ./docker/app
+    #build:
+    #  context: ./docker/app
+    image: shevawall/laravel-php74:latest
     container_name: app
     restart: always
     volumes:
@@ -28,8 +29,7 @@ services:
       - ./docker/mariadb/dbdata:/var/lib/mysql
 
   supervisor:
-    build:
-      context: ./docker/supervisor
+    image: shevawall/supervisor-for-laravel:latest
     container_name: supervisor
     restart: always
     volumes:
